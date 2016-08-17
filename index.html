@@ -1,0 +1,688 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<meta content="telephone=no" name="format-detection">
+<link href="css/index.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="js/jquery.min.js" ></script>
+
+
+<script>
+
+var u = navigator.userAgent;
+var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1; //android终端
+var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+
+$(function(){
+	
+	
+		function  AllJq(){
+
+
+				if(isiOS==true)
+				{
+					setupWebViewJavascriptBridge(function(bridge) {
+						var userNameNum1 ="";
+						bridge.callHandler('JSTOOC', {'getUserInfo':'value'}, function responseCallback(responseData) {
+							console.log("JS received response:", responseData)
+						})
+						
+						bridge.registerHandler('OCTOJS', function(data, responseCallback) {
+							console.log("JS Echo called with:", data)
+							responseCallback(data)
+							
+							if(data.UserName && data.PassWord){
+								userNameNum1 = data.UserName;
+								passWordNum = data.PassWord;
+								PeopleInfo = data.type;
+								
+							GetToken(data.UserName,data.PassWord,data.type);
+							var Access_token=GetToken(data.UserName,data.PassWord,data.type);
+							
+							GetBanners(Access_token);
+							GetIndexIcon(Access_token);
+							GetPointLotteryList(Access_token);
+	
+							sessionStorage.setItem('UserName', userNameNum1);
+							sessionStorage.setItem('PassWord', passWordNum);
+							sessionStorage.setItem('LoginType', PeopleInfo);
+							sessionStorage.setItem('Access_token', Access_token);
+							
+							}
+						})
+					})
+				} 
+					
+				/* ios over */
+				else if(isAndroid==true)
+				{	
+					
+					var data=window.AndroidWebView.getUserInfo();
+					var json = eval('(' + data + ')'); 
+				
+					GetToken(json.uname,json.pwd,json.type);
+					
+					var Access_token=GetToken(json.uname,json.pwd,json.type);
+					
+					GetBanners(Access_token);
+					GetIndexIcon(Access_token);
+					GetPointLotteryList(Access_token);
+					
+					$('#BackToApps').on('click',function(){
+						window.AndroidWebView.goBack()
+					});
+					
+					sessionStorage.setItem('UserName', json.uname);
+					sessionStorage.setItem('PassWord', json.pwd);
+					sessionStorage.setItem('LoginType', json.type);
+					sessionStorage.setItem('Access_token', Access_token);
+				}
+		}
+			
+		AllJq();
+		
+		
+		
+		
+	//与app交互
+	document.getElementById("BackToApps").addEventListener('click',function(){
+		setupWebViewJavascriptBridge(function(bridge) {
+			
+			 bridge.callHandler('JSTOOC', {'BackToApps': 'noData'}, function(response) {
+				console.log('JS got response', response)
+				
+			})
+		});
+	});
+	//与app交互
+	
+});//All and Frist.
+
+
+//appBridge
+
+function setupWebViewJavascriptBridge(callback) {
+	if (window.WebViewJavascriptBridge) { return callback(WebViewJavascriptBridge); }
+	if (window.WVJBCallbacks) { return window.WVJBCallbacks.push(callback); }
+	window.WVJBCallbacks = [callback];
+	var WVJBIframe = document.createElement('iframe');
+	WVJBIframe.style.display = 'none';
+	WVJBIframe.src = 'wvjbscheme://__BRIDGE_LOADED__';
+	document.documentElement.appendChild(WVJBIframe);
+	setTimeout(function() { document.documentElement.removeChild(WVJBIframe) }, 0)
+}
+
+//       -------------     Get BannerImg
+
+function GetBanners(s){
+	
+	$.ajax({
+		type: "get",
+		url : "http://192.168.16.2/v4/mallIndex",
+		dateType:"json",
+		headers:{
+			'Content-Type': 'application/json; charset=utf-8',
+			'Authorization': 'Bearer '+s
+	
+		},         
+		success:function(data){
+	
+			var SrcImg0=data.AdList[0].ImgUri;
+			var SrcImg1=data.AdList[1].ImgUri;
+
+			var SrcImg0Url='<img style="width:100%;height:100%;" src="'+SrcImg0+'" />'
+				$('.BannersImg0').append(SrcImg0Url);
+			var SrcImg1Url='<img style="width:100%;height:100%;" src="'+SrcImg1+'" />'
+				$('.BannersImg1').append(SrcImg1Url);
+			
+		},
+		error:function () {
+			}
+	})
+};	
+
+
+//       -------------     Get IndexIcon
+
+function GetIndexIcon(s){
+	$.ajax({
+		type: "get",
+		url : "http://192.168.16.2/v4/mallIndex",
+		dateType:"json",
+		headers:{
+			'Authorization': 'Bearer '+s
+		},         
+		success:function(data){
+			
+			var Plistdata=data.ProductList;
+			for (var a=0;a<Plistdata.length;a++)
+			{	
+				var  ProListUrl=Plistdata[a].ProductIcon;
+				var  ProListName=Plistdata[a].ProductName;
+				var  ProListPrice=Plistdata[a].ProductPrice;
+				var  ProListQuantity=Plistdata[a].StockQuantity;
+				var  ProductListId=Plistdata[a].ProductId;
+				
+				$('.ProListImg').eq(a).attr('src',ProListUrl);
+				$('.ProListName').eq(a).html(ProListName);
+				$('.ProListPrice').eq(a).html(ProListPrice);
+				$('.ProListQuantity').eq(a).html(ProListQuantity);
+				$('.IndexHref').eq(a).attr('href','ProductPageList.html?MZ='+ProductListId); 
+			}
+		},
+			error: function (data) {
+				var result = data.responseText;
+				console.log(result);
+			}
+	})
+};	
+
+function GetPointLotteryList(s){
+			
+	$.ajax({
+		type: "get",
+		url : "http://192.168.16.2/api/pointLotteryList",
+		dateType:"json",
+		headers:{
+			'Authorization': 'Bearer '+s
+		},         
+		success:function(data){
+			
+			var Pointdata=data.Items;
+			
+			for(var i=0;i<Pointdata.length;i++)
+			{
+				var IndexIconUrl=Pointdata[i].Icon;
+				var IndexName=Pointdata[i].Name;
+				var PointListId=Pointdata[i].PointLotteryId;
+					
+					$('.ProPointImg').eq(i).attr('src',IndexIconUrl);
+					$('.proname').eq(i).html(IndexName);
+					$('.IndexPointHref').eq(i).attr('href','ProductPageCont.html?MZ='+PointListId);
+				
+			};
+		},
+		error: function (data) {
+			var result = data.responseText;
+
+			console.log(result);
+		}
+	})
+};
+
+function GetToken(User,Pass,type){
+		var result="";	
+		$.ajax({
+		    url: 'http://192.168.16.2/home/GetToken',
+			
+		    data: JSON.stringify({
+			        ClientId: type,
+					UserName: User,
+					PassWord: Pass,
+			}),
+		   //服务器返回json格式数据
+			dateType:"json",
+			type: "Post", //HTTP请求类型
+			async: false,
+			headers:{
+				'Content-Type': 'application/json'
+			},
+			success: function (data) {
+				
+				var Datajson = eval('(' + data + ')'); 
+				
+				result=Datajson.access_token;
+				return result;
+				},
+			error: function (data) {
+				var result = data.responseText;
+
+				console.log(result);
+			}
+
+		});
+		return result;
+};
+	
+	
+	
+
+
+</script>
+<title>商城首页</title>
+<style>
+</style>
+</head>
+
+
+<body>
+
+<div id="header">
+    <div class="flex head-line">
+        <div class="flex-1">
+        	<div style="margin-left:1rem;width:1.42rem;height:2.42rem;margin-top:.8rem;">
+            	<img id="BackToApps" style="width:100%;height:100%;" src="Picture/back.png" />
+            </div>
+        </div>
+        <div class="flex-1 head-line-box-m">
+            <h3 style="font-size:1.8rem;"><strong>商城</strong></h3>
+        </div>
+        <div class="flex-1 head-line-box-r padd-r1"></div>
+    </div>
+   <div style="height:5rem;"></div>
+    
+    <div id="slide">
+        <section id="slideBox" class="slideBox">
+            <div class="bd">
+                <ul>
+                    <li>
+                        <a class="pic" href="PrizePage.html">
+                            <div class="BannersImg0" style="width:100%;height:16rem;">
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="pic" href="PrizePage.html">
+                            <div class="BannersImg1" style="width:100%;height:16rem;">
+                            </div>
+                        </a>
+                    </li>		
+                </ul>
+            </div>
+            <div class="hd">
+                <ul>
+                	<li></li>
+                    <li></li>
+                </ul>
+            </div>
+        </section>
+        <script type="text/javascript" src="js/TouchSlide.1.1.js"></script>
+        <script type="text/javascript">
+            TouchSlide({ 
+                slideCell:"#slideBox",
+                titCell:".hd ul", //开启自动分页 autoPage:true ，此时设置 titCell 为导航元素包裹层
+                mainCell:".bd ul", 
+                effect:"leftLoop", 
+                autoPage:true,//自动分页
+                autoPlay:true, //自动播放
+                delayTime:500,
+                interTime:3500
+            });
+        </script>
+    </div>
+    
+    
+    
+</div>
+<!--head over--->
+<div id="mian">
+	<div id="mian-head">
+    	
+        	<div class="mian-head-box">
+            	<span style="width:.4rem;height:1.1rem;background:#42a6f4;display:inline-block;margin-left:1rem;border-radius:.4rem;"></span>
+                <span style="margin-left:.6rem;">
+                    <a>夺宝专区</a>
+                </span>
+                <span class="f-right"><a class="padd-r1" style="font-size:1.1rem;color:#666666;">第16003期</a></span>
+            </div>
+
+            <div id="pro-show">
+            	<div style="height:9.5rem;">
+                    <div id="sildLeftBox" class="sildLeftBox" style="overflow:hidden;">
+                        <div class="hd" style="display:none;">
+                            <ul>
+                                <li>1</li>
+                                <li>2</li>
+                                <li>3</li>
+                            </ul>
+                        </div>
+                        <div class="bd">
+                            <ul>
+                            	
+                                <li>
+                                    <a href="#">
+                                        <div class="pro-show-li-box">
+                                            <a class="IndexPointHref" href="ProductPageCont.html">
+                                                <div class="pro-show-box-img" >
+                                                	<img class="ProPointImg" style="width:100%;height:100%;" src="" />
+                                                </div>
+                                            </a>
+                                            <span class="pro-show-box-span1">
+                                                <a class="proname">Iphone1S1 plus</a>
+                                            </span>
+                                            <div class="pro-show-box-span2">
+                                                <div class="pro-show-box-span-line">
+                                                    <div class="test"></div>
+                                                </div>
+                                                <span style="font-size:1rem;"><a>300</a><a>/</a><a>500</a></span>
+                                            </div>
+                                         </div>
+                                    </a>
+                                </li>
+                                
+                                <li>
+                                    <a href="#">
+                                        <div class="pro-show-li-box">
+                                            <a class="IndexPointHref" href="ProductPageCont.html">
+                                                <div class="pro-show-box-img" >
+                                                	<img class="ProPointImg" style="width:100%;height:100%;" src="" />
+                                                </div>
+                                            </a>
+                                            <span class="pro-show-box-span1">
+                                                <a class="proname">Iphone1S2 plus</a>
+                                            </span>
+                                            <div class="pro-show-box-span2">
+                                                <div class="pro-show-box-span-line">
+                                                    <div class="test"></div>
+                                                </div>
+                                                <span style="font-size:1rem;"><a>300</a><a>/</a><a>500</a></span>
+                                            </div>
+                                         </div>
+                                    </a>
+                                </li>
+                                
+                                <li>
+                                    <a href="#">
+                                        <div class="pro-show-li-box">
+                                            <a class="IndexPointHref" href="ProductPageCont.html">
+                                                <div class="pro-show-box-img" >
+                                                	<img class="ProPointImg" style="width:100%;height:100%;" src="" />
+                                                </div>
+                                            </a>
+                                            <span class="pro-show-box-span1">
+                                                <a class="proname">Iphone1S3 plus</a>
+                                            </span>
+                                            <div class="pro-show-box-span2">
+                                                <div class="pro-show-box-span-line">
+                                                    <div class="test"></div>
+                                                </div>
+                                                <span style="font-size:1rem;"><a>300</a><a>/</a><a>500</a></span>
+                                            </div>
+                                         </div>
+                                    </a>
+                                </li>
+                            </ul>
+                           
+                            <ul>
+                            	
+                                <li>
+                                    <a href="#">
+                                        <div class="pro-show-li-box">
+                                            <a class="IndexPointHref" href="ProductPageCont.html">
+                                                <div class="pro-show-box-img" >
+                                                	<img class="ProPointImg" style="width:100%;height:100%;" src="" />
+                                                </div>
+                                            </a>
+                                            <span class="pro-show-box-span1">
+                                                <a class="proname">Iphone1S4 plus</a>
+                                            </span>
+                                            <div class="pro-show-box-span2">
+                                                <div class="pro-show-box-span-line">
+                                                    <div class="test"></div>
+                                                </div>
+                                                <span style="font-size:1rem;"><a>300</a><a>/</a><a>500</a></span>
+                                            </div>
+                                         </div>
+                                    </a>
+                                </li>
+                                
+                                <li>
+                                    <a href="#">
+                                        <div class="pro-show-li-box">
+                                            <a class="IndexPointHref" href="ProductPageCont.html">
+                                                <div class="pro-show-box-img">
+                                                	<img class="ProPointImg" style="width:100%;height:100%;" src="" />
+                                                </div>
+                                            </a>
+                                            <span class="pro-show-box-span1">
+                                                <a class="proname">Iphone2S5 plus</a>
+                                            </span>
+                                            <div class="pro-show-box-span2">
+                                                <div class="pro-show-box-span-line">
+                                                    <div class="test" style="float:left;"></div>
+                                                </div>
+                                                <span style="font-size:1rem;"><a>300</a><a>/</a><a>500</a></span>
+                                            </div>
+                                         </div>
+                                    </a>
+                                </li>
+                                
+                                <li>
+                                    <a href="#">
+                                        <div class="pro-show-li-box">
+                                            <a class="IndexPointHref" href="ProductPageCont.html">
+                                                <div class="pro-show-box-img">
+                                                	<img class="ProPointImg" style="width:100%;height:100%;" src="" />
+                                                </div>
+                                            </a>
+                                            <span class="pro-show-box-span1">
+                                                <a class="proname">Iphone3S6 plus</a>
+                                            </span>
+                                            <div class="pro-show-box-span2">
+                                                <div class="pro-show-box-span-line">
+                                                    <div class="test"></div>
+                                                </div>
+                                                <span style="font-size:1rem;"><a>300</a><a>/</a><a>500</a></span>
+                                            </div>
+                                         </div>
+                                    </a>
+                                </li>
+                            </ul>
+                            
+                            <ul>
+                            	
+                                <li>
+                                    <a href="#">
+                                        <div class="pro-show-li-box">
+                                            <a class="IndexPointHref" href="ProductPageCont.html">
+                                                <div class="pro-show-box-img" >
+                                                	<img class="ProPointImg" style="width:100%;height:100%;" src="" />
+                                                </div>
+                                            </a>
+                                            <span class="pro-show-box-span1">
+                                                <a class="proname">Iphone1S7 plus</a>
+                                            </span>
+                                            <div class="pro-show-box-span2">
+                                                <div class="pro-show-box-span-line">
+                                                    <div class="test"></div>
+                                                </div>
+                                                <span style="font-size:1rem;"><a>300</a><a>/</a><a>500</a></span>
+                                            </div>
+                                         </div>
+                                    </a>
+                                </li>
+                                
+                                <li>
+                                    <a href="#">
+                                        <div class="pro-show-li-box">
+                                            <a class="IndexPointHref" href="ProductPageCont.html">
+                                                <div class="pro-show-box-img">
+                                                	<img class="ProPointImg" style="width:100%;height:100%;" src="" />
+                                                </div>
+                                            </a>
+                                            <span class="pro-show-box-span1">
+                                                <a class="proname">Iphone2S8 plus</a>
+                                            </span>
+                                            <div class="pro-show-box-span2">
+                                                <div class="pro-show-box-span-line">
+                                                    <div class="test" style="float:left;"></div>
+                                                </div>
+                                                <span style="font-size:1rem;"><a>300</a><a>/</a><a>500</a></span>
+                                            </div>
+                                         </div>
+                                    </a>
+                                </li>
+                                
+                                <li>
+                                    <a href="#">
+                                        <div class="pro-show-li-box">
+                                            <a class="IndexPointHref" href="ProductPageCont.html">
+                                                <div class="pro-show-box-img">
+                                                	<img class="ProPointImg" style="width:100%;height:100%;" src="" />
+                                                </div>
+                                            </a>
+                                            <span class="pro-show-box-span1">
+                                                <a class="proname">Iphone3S9 plus</a>
+                                            </span>
+                                            <div class="pro-show-box-span2">
+                                                <div class="pro-show-box-span-line">
+                                                    <div class="test"></div>
+                                                </div>
+                                                <span style="font-size:1rem;"><a>300</a><a>/</a><a>500</a></span>
+                                            </div>
+                                         </div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    
+                </div>
+            
+            
+            </div>
+        
+        
+        <div style="height:1rem;width:100%;background:#F2F2F2;"></div>
+ <!----mian-head over--->       
+
+        <div id="mian-mid">
+        	<div style="clear:both;"></div>
+        	<div class="mian-mid-head">
+            	<span style="width:.4rem;height:1.1rem;background:#42a6f4;display:inline-block;margin-left:1rem;border-radius:.4rem;"></span>
+                <span style="margin-left:.6rem;"><a>实物商城</a></span>
+            </div>
+            
+            <div id="goods-show">
+            	<div class="flex goosd-line">
+                	<div class="flex-1 flex-1-lbox">
+                    
+                        	<a class="IndexHref" href="ProductPageList.html">
+                                <div class="goods-flex-box-img" >
+                                    <img class="ProListImg" style="width:100%;height:100%; src="" />
+                                </div>
+                            </a>
+                        	<div class="goods-flex-box-img-words">
+                            	<dl>
+                                	<dd class="ProListName"><strong>皮卡丘玩偶</strong></dd>
+                                    <dt style="color:#ffb300;"><a class="ProListPrice">1200</a>积分</dt>
+                                    <dt style="color:#999999;font-size:.8rem;">剩余库存：<a class="ProListQuantity">50</a></dt>
+                                </dl>
+                            </div>
+                        
+                    </div>
+                	<div class="flex-1 flex-1-lbox">
+                    
+                        	<a class="IndexHref" href="ProductPageList.html">
+                                <div class="goods-flex-box-img" >
+                                    <img class="ProListImg" style="width:100%;height:100%; src="" />
+                                </div>
+                            </a>
+                        	<div class="goods-flex-box-img-words">
+                            	<dl>
+                                	<dd class="ProListName"><strong>皮卡丘玩偶</strong></dd>
+                                    <dt style="color:#ffb300;"><a class="ProListPrice">1200</a>积分</dt>
+                                    <dt style="color:#999999;font-size:.8rem;">剩余库存：<a class="ProListQuantity">50</a></dt>
+                                </dl>
+                            </div>
+                        
+                    </div>
+                </div>
+            	<div class="flex goosd-line">
+                	<div class="flex-1 flex-1-lbox">
+                    
+                        	<a class="IndexHref" href="ProductPageList.html">
+                                <div class="goods-flex-box-img" >
+                                    <img class="ProListImg" style="width:100%;height:100%; src="" />
+                                </div>
+                            </a>
+                        	<div class="goods-flex-box-img-words">
+                            	<dl>
+                                	<dd class="ProListName"><strong>皮卡丘玩偶</strong></dd>
+                                    <dt style="color:#ffb300;"><a class="ProListPrice">1200</a>积分</dt>
+                                    <dt style="color:#999999;font-size:.8rem;">剩余库存：<a class="ProListQuantity">50</a></dt>
+                                </dl>
+                            </div>
+                        
+                    </div>
+                	<div class="flex-1 flex-1-lbox">
+                    
+                        	<a class="IndexHref" href="ProductPageList.html">
+                                <div class="goods-flex-box-img" >
+                                    <img class="ProListImg" style="width:100%;height:100%; src="" />
+                                </div>
+                            </a>
+                        	<div class="goods-flex-box-img-words">
+                            	<dl>
+                                	<dd class="ProListName"><strong>皮卡丘玩偶</strong></dd>
+                                    <dt style="color:#ffb300;"><a class="ProListPrice">1200</a>积分</dt>
+                                    <dt style="color:#999999;font-size:.8rem;">剩余库存：<a class="ProListQuantity">50</a></dt>
+                                </dl>
+                            </div>
+                        
+                    </div>
+                </div>
+            	<div class="flex goosd-line">
+                	<div class="flex-1 flex-1-lbox">
+                    
+                        	<a class="IndexHref" href="ProductPageList.html">
+                                <div class="goods-flex-box-img" >
+                                    <img class="ProListImg" style="width:100%;height:100%; src="" />
+                                </div>
+                            </a>
+                        	<div class="goods-flex-box-img-words">
+                            	<dl>
+                                	<dd class="ProListName"><strong>皮卡丘玩偶</strong></dd>
+                                    <dt style="color:#ffb300;"><a class="ProListPrice">1200</a>积分</dt>
+                                    <dt style="color:#999999;font-size:.8rem;">剩余库存：<a class="ProListQuantity">50</a></dt>
+                                </dl>
+                            </div>
+                        
+                    </div>
+                	<div class="flex-1 flex-1-lbox">
+                    
+                        	<a class="IndexHref" href="ProductPageList.html">
+                                <div class="goods-flex-box-img" >
+                                    <img class="ProListImg" style="width:100%;height:100%; src="" />
+                                </div>
+                            </a>
+                        	<div class="goods-flex-box-img-words">
+                            	<dl>
+                                	<dd class="ProListName"><strong>皮卡丘玩偶</strong></dd>
+                                    <dt style="color:#ffb300;"><a class="ProListPrice">1200</a>积分</dt>
+                                    <dt style="color:#999999;font-size:.8rem;">剩余库存：<a class="ProListQuantity">50</a></dt>
+                                </dl>
+                            </div>
+                        
+                    </div>
+                </div>
+            
+            
+            </div>
+            
+            
+            <!----------------------------------------------------------------------------------------------->
+        </div>
+        
+    </div>
+</div>
+
+</body>
+
+
+
+<script type="text/javascript">
+
+	TouchSlide({
+		slideCell:"#sildLeftBox",
+		mainCell:".bd",
+		effect:"left",
+		delayTime:200,
+		interTime:116000,
+		autoPlay:true
+		});
+
+</script>
+</html>

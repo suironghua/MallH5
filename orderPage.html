@@ -1,0 +1,286 @@
+ <!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<meta content="telephone=no" name="format-detection">
+<link href="css/index.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="js/jquery.min.js" ></script>
+<script type="text/javascript" src="js/validate.js" ></script>
+<title>订单确认</title>
+<style>
+</style>
+</head>
+
+<body style="height:61.33rem;position:relative;">
+<div class="flex head-line">
+	<div class="flex-1">
+        <a href="Index.html" style="height:5rem;width:5rem;">
+        	<div style="margin-left:1rem;width:1.42rem;height:2.42rem;margin-top:.8rem;">
+            	<img style="width:100%;height:100%;" src="Picture/back.png" />
+            </div>
+        </a>
+    </div>
+	<div class="flex-1 flex-center" >
+        <a style="font-size:1.8rem;" href="#">收货信息</a>
+    </div>
+	<div class="flex-1" style="text-align:right;padding-right:1rem;">
+    	<a href="#">规则说明</a>
+    </div>
+</div>
+<div style="height:5rem;"></div>
+
+
+<div id="get-prods">
+	<div id="get-prods-head-line">
+        <span style="width:.3rem;height:1.4rem;background:#42a6f4;display:inline-block;margin:0 0 0 1rem;border-radius:.3rem;"></span>
+        <span>收货信息</span>
+    </div>
+    <form style="width:100%;" id="BuyMessage" name="BuyMessage" action="">
+    	<div class="form-group">                           <!----class="form-group"必须,否则不能够复原-------------->
+            <label class="get-prods-label-line" style="padding-top:1rem;">
+                <span class="get-prods-message">收货人</span>
+                	<input id="name" type="text" name="Buyer" value="Your Full Name" class="get-prods-setMessage" />
+            </label>
+       
+            <label class="get-prods-label-line">
+                <span class="get-prods-message">手机号码</span>
+                <input id="miblename" type="text" name="PhoneNumber" value="Your number" class="get-prods-setMessage" />
+            </label>
+            <label class="get-prods-label-line">
+                <span class="get-prods-message">邮政编码</span>
+                <input id="placenub" type="text" name="Zip" value="Your adds" class="get-prods-setMessage" />
+            </label>
+            
+            <label class="get-prods-label-line" style="position:relative">
+                <span class="get-prods-message">详细地址</span>
+                <textarea id="address" type="text" name="Addr" value="" class="get-prods-setMessage" style="height:7rem;resize:none;"></textarea>
+                <span style="font-size:1rem;color:#999999;position:absolute;right:.5rem;bottom:-2.7rem;">限100个字以内</span>
+            </label>
+            <label style="display:none;">
+                <input type="text" id="BuyProId" name="ProductId" value="" />
+                <input type="text" id="BuyProNumber" name="ProductNum" value="" />
+            </label>
+        </div>
+        </form>
+        
+        <div style="clear:both;"></div>
+        
+        <div id="get-prods-head-line" style="border-top:1px solid #E5E5E5;margin-top:1rem;">
+            <span style="width:.3rem;height:1.4rem;background:#42a6f4;display:inline-block;margin:1rem 0 0 1rem;border-radius:.3rem;"></span>
+            <span>收货信息</span>
+        </div>
+        <div class="get-prods-box">
+        	<div class="get-prods-mbox">
+            	<div class="flex get-prods-flex-box">
+                	<div class="flex-1 flex-center get-prods-flex-box-left">
+                    	<div class="get-prods-flex-box-left-img">
+                            <!-- <img src="" /> ---图片路径------------------------------------------->
+                            <img id="PictureSrc" src="" style="width:100%;height:100%;" />
+                        </div>
+                    </div>
+                	<div class="flex-3 get-prods-flex-box-right">
+                    	<dl>
+                        	<dt id="Pname">脑残吼手办</dt>
+                            <dd>数量：<strong id="many">1</strong></dd>
+                            <dd>价格：<strong id="price">368800积分</strong></dd>
+                        </dl>
+                    
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="get-prods-foot">
+        	<div style="padding-top:8rem;">
+            	<div>
+                    <input type="button" id="btn-s" value="确认" class="get-prods-foot-btn" />
+            	</div>
+            </div>
+        </div>
+        
+    
+</div>
+</body>
+
+<script type="text/javascript">
+
+$(function(){
+	
+	
+	GetSeesion();
+
+	$('#btn-s').on('click',function(){
+		toValidate();
+		});
+	/*	
+	$('input:text').each(function(){  
+		var txt = $(this).val();  
+		$(this).focus(function(){  
+		if(txt === $(this).val())
+		{ $(this).val("") } 
+		}).blur(function(){  
+		if($(this).val() == ""){ $(this).val(txt)  }
+		});  
+	})
+	*/
+	$('input:text').focus(function(){$(this).attr('value',''),$(this).css('color','#333333')})
+	$('#address').focus(function(){$(this).css('color','#333333')})
+
+});
+
+
+
+function show_confirm(){
+	var r=confirm("确认购买吗？");
+	if (r==true)
+	  {
+	  
+	  var UesrName=sessionStorage.getItem('UserName');
+	  var PassWord=sessionStorage.getItem('PassWord');
+	  var LoginType=sessionStorage.getItem('LoginType');
+	  var Access_token=sessionStorage.getItem('Access_token');
+	  
+	//  var Access_token=GetToken();
+	  PostBuyMessage(Access_token);
+	
+	  }
+	else
+	  {
+	  alert("购买失败！");
+	  }
+	};
+
+function GetSeesion(){
+	
+	var BuyNumber = sessionStorage.getItem('class');
+	var BuyName = sessionStorage.getItem('Name');
+	var BuyPrice = sessionStorage.getItem('Pirce');
+	var BuyPicture = sessionStorage.getItem('Picture');
+	
+	var BuyProId = sessionStorage.getItem('ProId');
+	
+	$('#Pname').html(BuyName);
+	$('#many').html(BuyNumber);
+	$('#price').html((BuyPrice*BuyNumber)+'积分');
+	$('#PictureSrc').attr('src',BuyPicture)
+	
+	$('#BuyProId').attr('value',BuyProId);
+	$('#BuyProNumber').attr('value',BuyNumber);
+	
+	};
+	
+function PostBuyMessage(s){
+	
+	var name=$('#name').val();
+	var PhoneNumber=$('#mible-name').val();
+	var Zip=$('#place-nub').val();
+	var Addr=$('#address').val();
+	var ProductId=$('#BuyProId').val();
+	var ProductNum=$('#BuyProNumber').val();
+	var ProductPrice=parseInt($('#price').html());
+	
+	var attr={
+		"Buyer":name,
+		"Address":{
+			"PhoneNumber":PhoneNumber,
+			"Zip":Zip,
+			"Addr":Addr
+					},
+		"OrderDetails":
+        [{
+            "ProductId":ProductId,
+            "ProductNum":ProductNum,
+			"ProductPrice":ProductPrice.toString()
+        }]
+		}
+	var jsondata = JSON.stringify(attr);
+	$.ajax({
+		
+		type: "post",
+		url : 'http://192.168.16.2/api/orders',
+		dateType:"json",
+	
+		data:jsondata,
+		async:true,
+		headers:{
+			'Content-Type': 'application/json; charset=utf-8',
+			'Authorization': 'Bearer '+s
+	
+		},         
+		success:function (){
+			
+			alert("已购买！");
+			
+			},
+		error:function (){
+			alert('error');
+			}
+		
+		})
+		
+	};
+	
+function GetToken(){
+	        var a = "baoluo_ios";
+            var b = "123456";
+			var result="";	
+		$.ajax({
+		    url: 'http://192.168.16.2/home/GetToken',
+			
+		    data: JSON.stringify({
+			        ClientId: 'baoluo_ios',
+					UserName: '13622386740',
+					PassWord: '123456',
+			}),
+		   //服务器返回json格式数据
+			dateType:"json",
+			type: "Post", //HTTP请求类型
+			async: false,
+			headers:{
+				'Content-Type': 'application/json'
+			},
+			success: function (data) {
+				
+				var Datajson = eval('(' + data + ')'); 
+				
+				result=Datajson.access_token;
+				return result;
+				},
+			error: function (data) {
+				var result = data.responseText;
+
+				alert(result)
+			}
+
+		});
+		return result;
+};
+
+function toValidate(){
+	var val = new validate({
+		
+		//rules里面是检验规则，
+		//key为需要检验的input的id,
+		//value为此input对应的检验规则
+		
+		rules:{
+			name:"notEmpty",   
+			miblename:"mobile",
+			placenub:"zipCode",
+			address:"notEmpty"
+		},
+		/*submitFun里面为检验成功后要执行的方法*/
+		
+		submitFun:function(){
+			
+			show_confirm();
+			
+		}
+	})
+}
+
+
+</script>
+
+</html>

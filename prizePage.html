@@ -6,29 +6,18 @@
 <meta content="telephone=no" name="format-detection">
 <link href="css/index.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="js/jquery.min.js" ></script>
-<title>中奖页面</title>
-<style>
-.open {
-width: 0;
-height: 0;
-margin-left: 2px;
-border-top: 6px solid;
-border-right: 6px solid transparent;
-border-left: 6px solid transparent;
-position:absolute;right:1rem;top:50%;
-display:none;
-}
+<title>中奖信息</title>
+<script>
+	window.alert = function(name){
+		var iframe = document.createElement("IFRAME");
+		iframe.style.display="none";
+		iframe.setAttribute("src", 'data:text/plain,');
+		document.documentElement.appendChild(iframe);
+		window.frames[0].window.alert(name);
+		iframe.parentNode.removeChild(iframe);
+	}
 
-.close {
-width: 0;
-height: 0;
-margin-left: 2px;
-border-left: 6px solid;
-border-top: 6px solid transparent;
-border-bottom: 6px solid transparent;
-position:absolute;right:1rem;top:45%;
-}
-</style>
+</script>
 <script>
 $(function(){
 
@@ -54,9 +43,25 @@ $(function(){
 			}
 		
 		})
-	
-	
-	
+/*		
+	var u = navigator.userAgent;
+	var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1; //android终端
+	var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+
+		if(isiOS==true){
+		
+		}
+		else if(isAndroid==true){
+			
+		}
+*/
+/*
+	$('.collapseDiv').click(function(){
+		
+		$('.suibian').fadeIn(1000,function(){$('.suibian').fadeOut(1000)});
+		
+		})
+	*/
 	});
 	
 </script>
@@ -75,7 +80,6 @@ $(function(){
         <a style="font-size:1.8rem;" href="#">中奖公告</a>
     </div>
 	<div class="flex-1" style="text-align:right;padding-right:1rem;">
-    	<a href="#">规则说明</a>
     </div>
 </div>
 <div style="height:5rem;"></div>
@@ -83,7 +87,7 @@ $(function(){
 <div id="mian">
 <!--***************************-->
     <div class="collapseDiv"> 
-	  <h3><span class="ProDate">第16005期</span>
+	  <h3><span class="ProDate">第1期</span>
           <span class="open DisplayNone"></span>
           <span class="close"></span>
       </h3> 
@@ -98,9 +102,9 @@ $(function(){
                     </div>
                 	<div class="flex-3 collapse-flex-box-right">
                     	<dl>
-                        	<dd>（抽奖奖品）地狱咆哮手办5</dd>
-                            <dt>40000积分</dt>
-                            <dt class="black">市场价：<span>400元</span></dt>
+                        	<dd>（抽奖奖品）</dd>
+                            <dt><a class="point" style="color:#F39800;">40000</a>积分</dt>
+                            <dt class="black">市场价：<span class="Cost">400元</span></dt>
                         </dl>
                     </div>
                 </div>
@@ -112,20 +116,23 @@ $(function(){
             	<div class="flex padd-m05" style="height:5.5rem;border-bottom:1px solid #E5E5E5;">
                 	<div class="flex-1 padd-l1">
                     	<div  class="collapse-flex-NameImg">
+                        	<img style="width:100%;height:100%;" src="Picture/wrzjtouxiang.png" />
                         </div>
                         <div class="collapse-flex-NameMessage">
-                            <span >超级小白</span>
+                            <span class="UserNname">无人中奖</span>
+                            <!--
                             <div style="margin-top:.2rem;">
                                 <span class="collapse-flex-NameMessage-Lv">
-                                    Lv&nbsp;22
+                                    <a>Lv&nbsp;22</a>
                                 </span>
-                                <span class="collapse-flex-NameMessage-Tip">富二代</span>
+                                <span class="collapse-flex-NameMessage-Tip"><a>富二代</a></span>
                                 <span class="collapse-flex-NameMessage-Sex"></span>
                             </div>
+                            -->
                         </div>
                     </div>
                 	<div class="flex-1" style="text-align:right;">
-                    	<span class="collapse-flex-NameMessage-Numb">133****1545</span>
+                    	<span class="collapse-flex-NameMessage-Numb"></span>
                     </div>
                 </div>
                 
@@ -140,7 +147,7 @@ $(function(){
 <!--***************************-->
 <!--***************************-->
     <div class="collapseDiv"> 
-	  <h3><span class="ProDate">第16004期</span>
+	  <h3><span class="ProDate">第1期</span>
           <span class="open DisplayNone"></span>
           <span class="close"></span>
       </h3> 
@@ -155,9 +162,9 @@ $(function(){
                     </div>
                 	<div class="flex-3 collapse-flex-box-right">
                     	<dl>
-                        	<dd>（抽奖奖品）地狱咆哮手办4</dd>
-                            <dt>40000积分</dt>
-                            <dt class="black">市场价：<span>400元</span></dt>
+                        	<dd>（抽奖奖品）</dd>
+                            <dt><a class="point" style="color:#F39800;">40000</a>积分</dt>
+                            <dt class="black">市场价：<span class="Cost">400元</span></dt>
                         </dl>
                     </div>
                 </div>
@@ -169,25 +176,31 @@ $(function(){
             	<div class="flex padd-m05" style="height:5.5rem;border-bottom:1px solid #E5E5E5;">
                 	<div class="flex-1 padd-l1">
                     	<div  class="collapse-flex-NameImg">
+                        	<img style="width:100%;height:100%;" src="Picture/wrzjtouxiang.png" />
                         </div>
                         <div class="collapse-flex-NameMessage">
-                            <span >超级小白</span>
+                            <span class="UserNname">无人中奖</span>
+                            <!--
                             <div style="margin-top:.2rem;">
                                 <span class="collapse-flex-NameMessage-Lv">
-                                    Lv&nbsp;22
+                                    <a>Lv&nbsp;22</a>
                                 </span>
-                                <span class="collapse-flex-NameMessage-Tip">富二代</span>
+                                <span class="collapse-flex-NameMessage-Tip"><a>富二代</a></span>
                                 <span class="collapse-flex-NameMessage-Sex"></span>
                             </div>
+                            -->
                         </div>
                     </div>
                 	<div class="flex-1" style="text-align:right;">
-                    	<span class="collapse-flex-NameMessage-Numb">133****1545</span>
+                    	<span class="collapse-flex-NameMessage-Numb"></span>
                     </div>
                 </div>
-                               
+                
+                
+                
             </div>
        </div>
+       
        
        
 	</div>
@@ -195,7 +208,7 @@ $(function(){
 
 <!--***************************-->
     <div class="collapseDiv"> 
-	  <h3><span class="ProDate">第16003期</span>
+	  <h3><span class="ProDate">第1期</span>
           <span class="open DisplayNone"></span>
           <span class="close"></span>
       </h3> 
@@ -210,9 +223,9 @@ $(function(){
                     </div>
                 	<div class="flex-3 collapse-flex-box-right">
                     	<dl>
-                        	<dd>（抽奖奖品）地狱咆哮手办3</dd>
-                            <dt>40000积分</dt>
-                            <dt class="black">市场价：<span>400元</span></dt>
+                        	<dd>（抽奖奖品）</dd>
+                            <dt><a class="point" style="color:#F39800;">40000</a>积分</dt>
+                            <dt class="black">市场价：<span class="Cost">400元</span></dt>
                         </dl>
                     </div>
                 </div>
@@ -224,25 +237,31 @@ $(function(){
             	<div class="flex padd-m05" style="height:5.5rem;border-bottom:1px solid #E5E5E5;">
                 	<div class="flex-1 padd-l1">
                     	<div  class="collapse-flex-NameImg">
+                        	<img style="width:100%;height:100%;" src="Picture/wrzjtouxiang.png" />
                         </div>
                         <div class="collapse-flex-NameMessage">
-                            <span >超级小白</span>
+                            <span class="UserNname">无人中奖</span>
+                            <!--
                             <div style="margin-top:.2rem;">
                                 <span class="collapse-flex-NameMessage-Lv">
-                                    Lv&nbsp;22
+                                    <a>Lv&nbsp;22</a>
                                 </span>
-                                <span class="collapse-flex-NameMessage-Tip">富二代</span>
+                                <span class="collapse-flex-NameMessage-Tip"><a>富二代</a></span>
                                 <span class="collapse-flex-NameMessage-Sex"></span>
                             </div>
+                            -->
                         </div>
                     </div>
                 	<div class="flex-1" style="text-align:right;">
-                    	<span class="collapse-flex-NameMessage-Numb">133****1545</span>
+                    	<span class="collapse-flex-NameMessage-Numb"></span>
                     </div>
                 </div>
-                                
+                
+                
+                
             </div>
        </div>
+       
        
        
 	</div>
@@ -250,7 +269,7 @@ $(function(){
 
 <!--***************************-->
     <div class="collapseDiv"> 
-	  <h3><span class="ProDate">第16003期</span>
+	  <h3><span class="ProDate">第1期</span>
           <span class="open DisplayNone"></span>
           <span class="close"></span>
       </h3> 
@@ -265,9 +284,9 @@ $(function(){
                     </div>
                 	<div class="flex-3 collapse-flex-box-right">
                     	<dl>
-                        	<dd>（抽奖奖品）地狱咆哮手办2</dd>
-                            <dt>40000积分</dt>
-                            <dt class="black">市场价：<span>400元</span></dt>
+                        	<dd>（抽奖奖品）</dd>
+                            <dt><a class="point" style="color:#F39800;">40000</a>积分</dt>
+                            <dt class="black">市场价：<span class="Cost">400元</span></dt>
                         </dl>
                     </div>
                 </div>
@@ -279,22 +298,27 @@ $(function(){
             	<div class="flex padd-m05" style="height:5.5rem;border-bottom:1px solid #E5E5E5;">
                 	<div class="flex-1 padd-l1">
                     	<div  class="collapse-flex-NameImg">
+                        	<img style="width:100%;height:100%;" src="Picture/wrzjtouxiang.png" />
                         </div>
                         <div class="collapse-flex-NameMessage">
-                            <span >超级小白</span>
+                            <span class="UserNname">无人中奖</span>
+                            <!--
                             <div style="margin-top:.2rem;">
                                 <span class="collapse-flex-NameMessage-Lv">
-                                    Lv&nbsp;22
+                                    <a>Lv&nbsp;22</a>
                                 </span>
-                                <span class="collapse-flex-NameMessage-Tip">富二代</span>
+                                <span class="collapse-flex-NameMessage-Tip"><a>富二代</a></span>
                                 <span class="collapse-flex-NameMessage-Sex"></span>
                             </div>
+                            -->
                         </div>
                     </div>
                 	<div class="flex-1" style="text-align:right;">
-                    	<span class="collapse-flex-NameMessage-Numb">133****1545</span>
+                    	<span class="collapse-flex-NameMessage-Numb"></span>
                     </div>
                 </div>
+                
+                
                 
             </div>
        </div>
@@ -306,7 +330,7 @@ $(function(){
     
 <!--***************************-->
     <div class="collapseDiv"> 
-	  <h3><span class="ProDate">第16003期</span>
+	  <h3><span class="ProDate">第1期</span>
           <span class="open DisplayNone"></span>
           <span class="close"></span>
       </h3> 
@@ -321,9 +345,9 @@ $(function(){
                     </div>
                 	<div class="flex-3 collapse-flex-box-right">
                     	<dl>
-                        	<dd>（抽奖奖品）地狱咆哮手办1</dd>
-                            <dt>40000积分</dt>
-                            <dt class="black">市场价：<span>400元</span></dt>
+                        	<dd>（抽奖奖品）</dd>
+                            <dt><a class="point" style="color:#F39800;">40000</a>积分</dt>
+                            <dt class="black">市场价：<span class="Cost">400元</span></dt>
                         </dl>
                     </div>
                 </div>
@@ -335,23 +359,28 @@ $(function(){
             	<div class="flex padd-m05" style="height:5.5rem;border-bottom:1px solid #E5E5E5;">
                 	<div class="flex-1 padd-l1">
                     	<div  class="collapse-flex-NameImg">
+                        	<img style="width:100%;height:100%;" src="Picture/wrzjtouxiang.png" />
                         </div>
                         <div class="collapse-flex-NameMessage">
-                            <span >超级小白</span>
+                            <span class="UserNname">无人中奖</span>
+                            <!--
                             <div style="margin-top:.2rem;">
                                 <span class="collapse-flex-NameMessage-Lv">
-                                    Lv&nbsp;22
+                                    <a>Lv&nbsp;22</a>
                                 </span>
-                                <span class="collapse-flex-NameMessage-Tip">富二代</span>
+                                <span class="collapse-flex-NameMessage-Tip"><a>富二代</a></span>
                                 <span class="collapse-flex-NameMessage-Sex"></span>
                             </div>
+                            -->
                         </div>
                     </div>
                 	<div class="flex-1" style="text-align:right;">
-                    	<span class="collapse-flex-NameMessage-Numb">133****1545</span>
+                    	<span class="collapse-flex-NameMessage-Numb"></span>
                     </div>
                 </div>
-                                
+                
+                
+                
             </div>
        </div>
        
@@ -359,52 +388,56 @@ $(function(){
        
 	</div>
 <!--***************************-->
-    
+    <div class="zanwushujv" style="width:100%;height:45rem;text-align:center;font-size:1.4rem;color:white;margin-top:5rem;display:none;">
+        <img src="Picture/zanwushujv.png" style="width:60%;" />
+    </div>
 </div>
-
 
 <script>
 
 $(function(){
 	
-	//GetToken();
 	var Access_token=sessionStorage.getItem('Access_token');
 		
 	GetPriceMessage(Access_token);
 	
-	
-	//GetPriceMessage();
 	});
 	
 	 
-	 
-	function GetPriceMessage(s){
-		
+function GetPriceMessage(s){
 		$.ajax({
 			
 			type: "get",
-			url : "http://192.168.16.2/V3/WinningRecord",
+			url : "https://api.baoluo.com/V3/WinningRecord",
 			dateType:"json",
-			data:{
-				 
-			},
-		//	crossDomain:true,
-		//	async: false,
 			headers:{
-				
 				'Authorization': 'Bearer '+s
-		
 			},         
 			success:function(data){
+				
+				var s=$('.collapse_body').length;
 				
 				
 				var IData=data.Items;
 				var Done=IData[0]
 				    one=Done.length
 					_one=$('.collapse_body').eq(0);
-					
-				for(var i=0;i<IData.length;i++){ 
 				
+				if(IData.length==0)
+				{
+					$('.zanwushujv').css('display','block')
+				}
+				else
+				{
+					$('.zanwushujv').css('display','none')
+				}
+				for ( var q=0;q<IData.length;q++){
+					$('.collapseDiv').eq(q).show();
+					
+				}
+				
+				for(var i=0;i<IData.length;i++){ 
+					
 					$('.ProDate').eq(i).html('第'+IData[i][0].Phase+'期');
 				}; 
 				//期数循环。
@@ -420,10 +453,24 @@ $(function(){
 					
 					var ImgSrc=Done[s].Icon;
 					var ImgName=Done[s].Name;
+					var point=Done[s].point;
+					var Cost=Done[s].Cost;
+					
+					var User=Done[s].User;
+					
+					
+					
 					_one.find('.collapse-flex-box-left-img').eq(s).children('img').attr('src',ImgSrc)
 					_one.find('.collapse-flex-box-right').eq(s).children('dl').children('dd').html(ImgName)
-					
+					_one.find('.collapse-flex-box-right').eq(s).children('dl').children('dt').children('.point').html(point)
+					_one.find('.collapse-flex-box-right').eq(s).children('dl').children('dt').children('.Cost').html(Cost+'元')
+					if(User!=null){
+					_one.find('.collapse-flex-NameMessage').eq(s).children('.UserNname').html(User.Name)
+					_one.find('.collapse-flex-NameImg').eq(s).children('img').attr('src',User.Icon)
+					_one.find('.collapse-flex-NameMessage-Numb').eq(s).html(User.PhoneNumber.substring(0,3)+'****'+User.PhoneNumber.substring(7,11))
+					}
 				}
+				
 				/*第1栏over*/
 				
 				var Dtwo=IData[1]
@@ -434,14 +481,27 @@ $(function(){
 				for(var c=1;c<two;c++){
 					
 					_two.append($('.collapse_content').eq(0).clone());
+					
 				}
 				
 				for(var s=0;s<two;s++){
 					
 					var ImgSrc=Dtwo[s].Icon;
 					var ImgName=Dtwo[s].Name;
+					var point=Dtwo[s].point;
+					var Cost=Dtwo[s].Cost;
+					
+					var User=Dtwo[s].User;
+					
 					_two.find('.collapse-flex-box-left-img').eq(s).children('img').attr('src',ImgSrc);
 					_two.find('.collapse-flex-box-right').eq(s).children('dl').children('dd').html(ImgName);
+					_two.find('.collapse-flex-box-right').eq(s).children('dl').children('dt').children('.point').html(point)
+					_two.find('.collapse-flex-box-right').eq(s).children('dl').children('dt').children('.Cost').html(Cost+'元')
+					if(User!=null){
+					_two.find('.collapse-flex-NameMessage').eq(s).children('.UserNname').html(User.Name)
+					_two.find('.collapse-flex-NameImg').eq(s).children('img').attr('src',User.Icon)
+					_two.find('.collapse-flex-NameMessage-Numb').eq(s).html(User.PhoneNumber.substring(0,3)+'****'+User.PhoneNumber.substring(7,11))
+					}
 				}
 				/*第2栏 over*/
 				
@@ -459,9 +519,21 @@ $(function(){
 					
 					var ImgSrc=Dthree[s].Icon;
 					var ImgName=Dthree[s].Name;
+					var point=Dthree[s].point;
+					var Cost=Dthree[s].Cost;
+					
+					var User=Dthree[s].User;
 					_three.find('.collapse-flex-box-left-img').eq(s).children('img').attr('src',ImgSrc);
 					_three.find('.collapse-flex-box-right').eq(s).children('dl').children('dd').html(ImgName);
+					_three.find('.collapse-flex-box-right').eq(s).children('dl').children('dt').children('.point').html(point)
+					_three.find('.collapse-flex-box-right').eq(s).children('dl').children('dt').children('.Cost').html(Cost+'元')
+					if(User!=null){
+					_three.find('.collapse-flex-NameMessage').eq(s).children('.UserNname').html(User.Name)
+					_three.find('.collapse-flex-NameImg').eq(s).children('img').attr('src',User.Icon)
+					_three.find('.collapse-flex-NameMessage-Numb').eq(s).html(User.PhoneNumber.substring(0,3)+'****'+User.PhoneNumber.substring(7,11))
+					}
 				}
+				
 				/*第3栏 over*/
 				
 				var Dfour=IData[3]
@@ -478,8 +550,19 @@ $(function(){
 					
 					var ImgSrc=Dfour[s].Icon;
 					var ImgName=Dfour[s].Name;
+					var point=Dfour[s].point;
+					var Cost=Dfour[s].Cost;
+					
+					var User=Dfour[s].User;
 					_four.find('.collapse-flex-box-left-img').eq(s).children('img').attr('src',ImgSrc);
 					_four.find('.collapse-flex-box-right').eq(s).children('dl').children('dd').html(ImgName);
+					_four.find('.collapse-flex-box-right').eq(s).children('dl').children('dt').children('.point').html(point)
+					_four.find('.collapse-flex-box-right').eq(s).children('dl').children('dt').children('.Cost').html(Cost+'元')
+					if(User!=null){
+					_four.find('.collapse-flex-NameMessage').eq(s).children('.UserNname').html(User.Name)
+					_four.find('.collapse-flex-NameImg').eq(s).children('img').attr('src',User.Icon)
+					_four.find('.collapse-flex-NameMessage-Numb').eq(s).html(User.PhoneNumber.substring(0,3)+'****'+User.PhoneNumber.substring(7,11))
+					}
 				}
 				/*第4栏 over*/
 				var Dfive=IData[4]
@@ -496,8 +579,19 @@ $(function(){
 					
 					var ImgSrc=Dfive[s].Icon;
 					var ImgName=Dfive[s].Name;
+					var point=Dfive[s].point;
+					var Cost=Dfive[s].Cost;
+					
+					var User=Dfive[s].User;
 					_five.find('.collapse-flex-box-left-img').eq(s).children('img').attr('src',ImgSrc);
 					_five.find('.collapse-flex-box-right').eq(s).children('dl').children('dd').html(ImgName);
+					_five.find('.collapse-flex-box-right').eq(s).children('dl').children('dt').children('.point').html(point)
+					_five.find('.collapse-flex-box-right').eq(s).children('dl').children('dt').children('.Cost').html(Cost+'元')
+					if(User!=null){
+					_five.find('.collapse-flex-NameMessage').eq(s).children('.UserNname').html(User.Name)
+					_five.find('.collapse-flex-NameImg').eq(s).children('img').attr('src',User.Icon)
+					_five.find('.collapse-flex-NameMessage-Numb').eq(s).html(User.PhoneNumber.substring(0,3)+'****'+User.PhoneNumber.substring(7,11))
+					}
 				}
 				/*第5栏 over*/
 				
@@ -536,49 +630,6 @@ $(function(){
 		
 		};
 	
-			/*--------*/
-			
-			
-function GetToken(){
-	        var a = "baoluo_ios";
-            var b = "123456";
-			var result="";	
-		$.ajax({
-		    url: 'http://192.168.16.2/home/GetToken',
-			
-		    data: JSON.stringify({
-			        ClientId: 'baoluo_ios',
-					UserName: '13622386740',
-					PassWord: '123456',
-			}),
-		   //服务器返回json格式数据
-			dateType:"json",
-			type: "Post", //HTTP请求类型
-			async: false,
-			headers:{
-				'Content-Type': 'application/json'
-			},
-			success: function (data) {
-				
-				var Datajson = eval('(' + data + ')'); 
-				
-			//	alert(Datajson.access_token)
-				result=Datajson.access_token;
-				return result;
-	//			var s=data.substring(22,data.length-23);
-	//			var jsons=eval("(" + s + ")")
-	//			alert(jsons.access_token);
-				},
-			error: function (data) {
-				var result = data.responseText;
-
-				alert(result)
-			}
-
-		});
-		return result;
-};
-			/*--------*/
 			
 </script>
 <script>
@@ -619,8 +670,10 @@ function GetToken(){
             }
         }
     }
+	
     Collapse.prototype.open = function(elm){
-        elm.style.visibility = "visible";
+        elm.style.visibility = "visible";    
+    //    elm.style.visibility = "hidden";
         elm.style.height = elm.scrollHeight + "px"
         
     }
@@ -630,7 +683,8 @@ function GetToken(){
     }
     Collapse.prototype.isOpen = function(elm){    
     
-      return elm.style.visibility === "visible"
+     return elm.style.visibility === "visible"   
+	//	return elm.style.visibility === "hidden"
     }
     
     Collapse.prototype.getCurrent = function(header){

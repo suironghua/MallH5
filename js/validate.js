@@ -86,7 +86,9 @@ var validate = Class
 						ele = ele.replace("#","");
 						that.toVal("#"+ele,that.cfg.rules[ele]);
 					});
-					alert(message);
+				//	alert(message);
+				$('#WrongMessage').html(message);
+				$('#WrongMessage').fadeIn(1500,function(){$('#WrongMessage').fadeOut(1500)});
 				}	
 				this.flag++;	
 				var that = this;			
@@ -96,7 +98,7 @@ var validate = Class
 var validateConstant = {
 	"notEmpty" : /^.+$/,// 合法字符
 	"password" : /^[0-9A-Za-z]{1,18}$/,// 密码
-	"rightfulString" : /^[A-Za-z0-9_-]+$/,// 合法字符
+	"rightfulString" : /^[A-Za-z0-9_-]+$/,// 合法字符.
 	"number" : /^\d+$/,// 数字
 	"endlish" : /^[A-Za-z]+$/,// 纯英文
 	"numberEnglish" : /^[A-Za-z0-9]+$/,// 英文和数字

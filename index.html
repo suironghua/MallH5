@@ -9,19 +9,18 @@
 
 
 <script>
-
-var u = navigator.userAgent;
-var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1; //android终端
-var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
-
 $(function(){
-	
+		
 	
 		function  AllJq(){
-
+			
+				var u = navigator.userAgent;
+				var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1; //android终端
+				var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
 
 				if(isiOS==true)
 				{
+					
 					setupWebViewJavascriptBridge(function(bridge) {
 						var userNameNum1 ="";
 						bridge.callHandler('JSTOOC', {'getUserInfo':'value'}, function responseCallback(responseData) {
@@ -39,8 +38,8 @@ $(function(){
 								
 							GetToken(data.UserName,data.PassWord,data.type);
 							var Access_token=GetToken(data.UserName,data.PassWord,data.type);
-							
-							GetBanners(Access_token);
+
+			//				GetBanners(Access_token);
 							GetIndexIcon(Access_token);
 							GetPointLotteryList(Access_token);
 	
@@ -65,7 +64,7 @@ $(function(){
 					
 					var Access_token=GetToken(json.uname,json.pwd,json.type);
 					
-					GetBanners(Access_token);
+	//				GetBanners(Access_token);
 					GetIndexIcon(Access_token);
 					GetPointLotteryList(Access_token);
 					
@@ -81,9 +80,6 @@ $(function(){
 		}
 			
 		AllJq();
-		
-		
-		
 		
 	//与app交互
 	document.getElementById("BackToApps").addEventListener('click',function(){
@@ -113,39 +109,12 @@ function setupWebViewJavascriptBridge(callback) {
 	setTimeout(function() { document.documentElement.removeChild(WVJBIframe) }, 0)
 }
 
-//       -------------     Get BannerImg
-
-function GetBanners(s){
-	
-	$.ajax({
-		type: "get",
-		url : "http://192.168.16.2/v4/mallIndex",
-		dateType:"json",
-		headers:{
-			'Content-Type': 'application/json; charset=utf-8',
-			'Authorization': 'Bearer '+s
-	
-		},         
-		success:function(data){
-	
-			var SrcImg0=data.AdList[0].ImgUri;
-			var SrcImg1=data.AdList[1].ImgUri;
-
-			var SrcImg0Url='<img style="width:100%;height:100%;" src="'+SrcImg0+'" />'
-				$('.BannersImg0').append(SrcImg0Url);
-			var SrcImg1Url='<img style="width:100%;height:100%;" src="'+SrcImg1+'" />'
-				$('.BannersImg1').append(SrcImg1Url);
-			
-		},
-		error:function () {
-			}
-	})
-};	
 
 
 //       -------------     Get IndexIcon
 
 function GetIndexIcon(s){
+	
 	$.ajax({
 		type: "get",
 		url : "http://192.168.16.2/v4/mallIndex",
@@ -155,7 +124,37 @@ function GetIndexIcon(s){
 		},         
 		success:function(data){
 			
+			var SrcImg0=data.AdList[0].ImgUri;
+			var SrcImg1=data.AdList[1].ImgUri;
+			
+			var SrcImg0Url='<img style="width:100%;height:100%;" src="'+SrcImg0+'" />';
+				$('.BannersImg0').append(SrcImg0Url);
+			var SrcImg1Url='<img style="width:100%;height:100%;" src="'+SrcImg1+'" />';
+				$('.BannersImg1').append(SrcImg1Url);
+			
+			
+			
+			
+			
 			var Plistdata=data.ProductList;
+			var s=((Plistdata.length)/2-1);
+			var ns=s.toString();
+			
+			if($('.ProListName').length!==Plistdata.length)
+			{
+
+				for(var c=0;c<s;c++)
+				{
+					$('#goods-show').append($('.goosd-line').eq(0).clone());
+					
+				}
+		
+			}
+			else
+			{
+				return false;
+			}
+			
 			for (var a=0;a<Plistdata.length;a++)
 			{	
 				var  ProListUrl=Plistdata[a].ProductIcon;
@@ -163,6 +162,7 @@ function GetIndexIcon(s){
 				var  ProListPrice=Plistdata[a].ProductPrice;
 				var  ProListQuantity=Plistdata[a].StockQuantity;
 				var  ProductListId=Plistdata[a].ProductId;
+				
 				
 				$('.ProListImg').eq(a).attr('src',ProListUrl);
 				$('.ProListName').eq(a).html(ProListName);
@@ -179,33 +179,59 @@ function GetIndexIcon(s){
 };	
 
 function GetPointLotteryList(s){
-			
+	
 	$.ajax({
 		type: "get",
 		url : "http://192.168.16.2/api/pointLotteryList",
-		dateType:"json",
+		dateType:"json", 
 		headers:{
 			'Authorization': 'Bearer '+s
 		},         
 		success:function(data){
 			
 			var Pointdata=data.Items;
+		
+			
+			if(Pointdata.length==0)
+			{
+				$('#pro-show').hide();
+			}
+			
+			
+			$('.pro-show-li-box').hide();
+			for (i=0;i<Pointdata.length;i++)
+			{
+				$('.pro-show-li-box').eq(i).show();
+			}
+	
+	
 			
 			for(var i=0;i<Pointdata.length;i++)
 			{
 				var IndexIconUrl=Pointdata[i].Icon;
 				var IndexName=Pointdata[i].Name;
 				var PointListId=Pointdata[i].PointLotteryId;
+				var number= Pointdata[0].Phase;
+				var IndexJoinNum= Pointdata[i].JoinNum;
+				var IndexUserNum= Pointdata[i].UserNum;
+
+				var TestLength=((IndexJoinNum/IndexUserNum)*7+0.5).toString();
+					
 					
 					$('.ProPointImg').eq(i).attr('src',IndexIconUrl);
 					$('.proname').eq(i).html(IndexName);
 					$('.IndexPointHref').eq(i).attr('href','ProductPageCont.html?MZ='+PointListId);
-				
+					$('.historynumber').html('第'+number+'期');
+					$('.IndexJoinNum').eq(i).html(IndexJoinNum);
+					$('.IndexUserNum').eq(i).html(IndexUserNum);
+					
+					
+					$('.test').eq(i).css('width',TestLength+'rem')
 			};
 		},
 		error: function (data) {
 			var result = data.responseText;
-
+	
 			console.log(result);
 		}
 	})
@@ -223,7 +249,7 @@ function GetToken(User,Pass,type){
 			}),
 		   //服务器返回json格式数据
 			dateType:"json",
-			type: "Post", //HTTP请求类型
+			type: "Post", //https请求类型
 			async: false,
 			headers:{
 				'Content-Type': 'application/json'
@@ -234,6 +260,7 @@ function GetToken(User,Pass,type){
 				
 				result=Datajson.access_token;
 				return result;
+				
 				},
 			error: function (data) {
 				var result = data.responseText;
@@ -245,9 +272,6 @@ function GetToken(User,Pass,type){
 		return result;
 };
 	
-	
-	
-
 
 </script>
 <title>商城首页</title>
@@ -266,7 +290,7 @@ function GetToken(User,Pass,type){
             </div>
         </div>
         <div class="flex-1 head-line-box-m">
-            <h3 style="font-size:1.8rem;"><strong>商城</strong></h3>
+            <div style="font-size:1.8rem;">商城</div>
         </div>
         <div class="flex-1 head-line-box-r padd-r1"></div>
     </div>
@@ -278,13 +302,13 @@ function GetToken(User,Pass,type){
                 <ul>
                     <li>
                         <a class="pic" href="PrizePage.html">
-                            <div class="BannersImg0" style="width:100%;height:16rem;">
+                            <div class="BannersImg0" style="width:100%;height:15.3rem;">
                             </div>
                         </a>
                     </li>
                     <li>
                         <a class="pic" href="PrizePage.html">
-                            <div class="BannersImg1" style="width:100%;height:16rem;">
+                            <div class="BannersImg1" style="width:100%;height:15.3rem;">
                             </div>
                         </a>
                     </li>		
@@ -324,7 +348,7 @@ function GetToken(User,Pass,type){
                 <span style="margin-left:.6rem;">
                     <a>夺宝专区</a>
                 </span>
-                <span class="f-right"><a class="padd-r1" style="font-size:1.1rem;color:#666666;">第16003期</a></span>
+                <span class="f-right"><a class="padd-r1 historynumber" style="font-size:1.1rem;color:#666666;"></a></span>
             </div>
 
             <div id="pro-show">
@@ -345,18 +369,18 @@ function GetToken(User,Pass,type){
                                         <div class="pro-show-li-box">
                                             <a class="IndexPointHref" href="ProductPageCont.html">
                                                 <div class="pro-show-box-img" >
-                                                	<img class="ProPointImg" style="width:100%;height:100%;" src="" />
+                                                	<img class="ProPointImg" style="width:100%;height:100%;" src="Picture/Background-k.png" />
                                                 </div>
                                             </a>
                                             <span class="pro-show-box-span1">
-                                                <a class="proname">Iphone1S1 plus</a>
+                                                <a class="proname">&nbsp;</a>
                                             </span>
                                             <div class="pro-show-box-span2">
                                                 <div class="pro-show-box-span-line">
                                                     <div class="test"></div>
                                                 </div>
-                                                <span style="font-size:1rem;"><a>300</a><a>/</a><a>500</a></span>
                                             </div>
+                                            <span style=""><a class="IndexJoinNum">1</a><a>/</a><a class="IndexUserNum">999</a></span>
                                          </div>
                                     </a>
                                 </li>
@@ -366,18 +390,18 @@ function GetToken(User,Pass,type){
                                         <div class="pro-show-li-box">
                                             <a class="IndexPointHref" href="ProductPageCont.html">
                                                 <div class="pro-show-box-img" >
-                                                	<img class="ProPointImg" style="width:100%;height:100%;" src="" />
+                                                	<img class="ProPointImg" style="width:100%;height:100%;" src="Picture/Background-k.png" />
                                                 </div>
                                             </a>
                                             <span class="pro-show-box-span1">
-                                                <a class="proname">Iphone1S2 plus</a>
+                                                <a class="proname">&nbsp;</a>
                                             </span>
                                             <div class="pro-show-box-span2">
                                                 <div class="pro-show-box-span-line">
                                                     <div class="test"></div>
                                                 </div>
-                                                <span style="font-size:1rem;"><a>300</a><a>/</a><a>500</a></span>
                                             </div>
+                                            <span style=""><a class="IndexJoinNum">1</a><a>/</a><a class="IndexUserNum">999</a></span>
                                          </div>
                                     </a>
                                 </li>
@@ -387,18 +411,18 @@ function GetToken(User,Pass,type){
                                         <div class="pro-show-li-box">
                                             <a class="IndexPointHref" href="ProductPageCont.html">
                                                 <div class="pro-show-box-img" >
-                                                	<img class="ProPointImg" style="width:100%;height:100%;" src="" />
+                                                	<img class="ProPointImg" style="width:100%;height:100%;" src="Picture/Background-k.png" />
                                                 </div>
                                             </a>
                                             <span class="pro-show-box-span1">
-                                                <a class="proname">Iphone1S3 plus</a>
+                                                <a class="proname">&nbsp;</a>
                                             </span>
                                             <div class="pro-show-box-span2">
                                                 <div class="pro-show-box-span-line">
                                                     <div class="test"></div>
                                                 </div>
-                                                <span style="font-size:1rem;"><a>300</a><a>/</a><a>500</a></span>
                                             </div>
+                                            <span style=""><a class="IndexJoinNum">1</a><a>/</a><a class="IndexUserNum">999</a></span>
                                          </div>
                                     </a>
                                 </li>
@@ -411,18 +435,18 @@ function GetToken(User,Pass,type){
                                         <div class="pro-show-li-box">
                                             <a class="IndexPointHref" href="ProductPageCont.html">
                                                 <div class="pro-show-box-img" >
-                                                	<img class="ProPointImg" style="width:100%;height:100%;" src="" />
+                                                	<img class="ProPointImg" style="width:100%;height:100%;" src="Picture/Background-k.png" />
                                                 </div>
                                             </a>
                                             <span class="pro-show-box-span1">
-                                                <a class="proname">Iphone1S4 plus</a>
+                                                <a class="proname">&nbsp;</a>
                                             </span>
                                             <div class="pro-show-box-span2">
                                                 <div class="pro-show-box-span-line">
                                                     <div class="test"></div>
                                                 </div>
-                                                <span style="font-size:1rem;"><a>300</a><a>/</a><a>500</a></span>
                                             </div>
+                                            <span style=""><a class="IndexJoinNum">1</a><a>/</a><a class="IndexUserNum">999</a></span>
                                          </div>
                                     </a>
                                 </li>
@@ -431,19 +455,19 @@ function GetToken(User,Pass,type){
                                     <a href="#">
                                         <div class="pro-show-li-box">
                                             <a class="IndexPointHref" href="ProductPageCont.html">
-                                                <div class="pro-show-box-img">
-                                                	<img class="ProPointImg" style="width:100%;height:100%;" src="" />
+                                                <div class="pro-show-box-img" >
+                                                	<img class="ProPointImg" style="width:100%;height:100%;" src="Picture/Background-k.png" />
                                                 </div>
                                             </a>
                                             <span class="pro-show-box-span1">
-                                                <a class="proname">Iphone2S5 plus</a>
+                                                <a class="proname">&nbsp;</a>
                                             </span>
                                             <div class="pro-show-box-span2">
                                                 <div class="pro-show-box-span-line">
-                                                    <div class="test" style="float:left;"></div>
+                                                    <div class="test"></div>
                                                 </div>
-                                                <span style="font-size:1rem;"><a>300</a><a>/</a><a>500</a></span>
                                             </div>
+                                            <span style=""><a class="IndexJoinNum">1</a><a>/</a><a class="IndexUserNum">999</a></span>
                                          </div>
                                     </a>
                                 </li>
@@ -452,19 +476,19 @@ function GetToken(User,Pass,type){
                                     <a href="#">
                                         <div class="pro-show-li-box">
                                             <a class="IndexPointHref" href="ProductPageCont.html">
-                                                <div class="pro-show-box-img">
-                                                	<img class="ProPointImg" style="width:100%;height:100%;" src="" />
+                                                <div class="pro-show-box-img" >
+                                                	<img class="ProPointImg" style="width:100%;height:100%;" src="Picture/Background-k.png" />
                                                 </div>
                                             </a>
                                             <span class="pro-show-box-span1">
-                                                <a class="proname">Iphone3S6 plus</a>
+                                                <a class="proname">&nbsp;</a>
                                             </span>
                                             <div class="pro-show-box-span2">
                                                 <div class="pro-show-box-span-line">
                                                     <div class="test"></div>
                                                 </div>
-                                                <span style="font-size:1rem;"><a>300</a><a>/</a><a>500</a></span>
                                             </div>
+                                            <span style=""><a class="IndexJoinNum">1</a><a>/</a><a class="IndexUserNum">999</a></span>
                                          </div>
                                     </a>
                                 </li>
@@ -477,18 +501,18 @@ function GetToken(User,Pass,type){
                                         <div class="pro-show-li-box">
                                             <a class="IndexPointHref" href="ProductPageCont.html">
                                                 <div class="pro-show-box-img" >
-                                                	<img class="ProPointImg" style="width:100%;height:100%;" src="" />
+                                                	<img class="ProPointImg" style="width:100%;height:100%;" src="Picture/Background-k.png" />
                                                 </div>
                                             </a>
                                             <span class="pro-show-box-span1">
-                                                <a class="proname">Iphone1S7 plus</a>
+                                                <a class="proname">&nbsp;</a>
                                             </span>
                                             <div class="pro-show-box-span2">
                                                 <div class="pro-show-box-span-line">
                                                     <div class="test"></div>
                                                 </div>
-                                                <span style="font-size:1rem;"><a>300</a><a>/</a><a>500</a></span>
                                             </div>
+                                            <span style=""><a class="IndexJoinNum">1</a><a>/</a><a class="IndexUserNum">999</a></span>
                                          </div>
                                     </a>
                                 </li>
@@ -497,19 +521,19 @@ function GetToken(User,Pass,type){
                                     <a href="#">
                                         <div class="pro-show-li-box">
                                             <a class="IndexPointHref" href="ProductPageCont.html">
-                                                <div class="pro-show-box-img">
-                                                	<img class="ProPointImg" style="width:100%;height:100%;" src="" />
+                                                <div class="pro-show-box-img" >
+                                                	<img class="ProPointImg" style="width:100%;height:100%;" src="Picture/Background-k.png" />
                                                 </div>
                                             </a>
                                             <span class="pro-show-box-span1">
-                                                <a class="proname">Iphone2S8 plus</a>
+                                                <a class="proname">&nbsp;</a>
                                             </span>
                                             <div class="pro-show-box-span2">
                                                 <div class="pro-show-box-span-line">
-                                                    <div class="test" style="float:left;"></div>
+                                                    <div class="test"></div>
                                                 </div>
-                                                <span style="font-size:1rem;"><a>300</a><a>/</a><a>500</a></span>
                                             </div>
+                                            <span style=""><a class="IndexJoinNum">1</a><a>/</a><a class="IndexUserNum">999</a></span>
                                          </div>
                                     </a>
                                 </li>
@@ -518,19 +542,19 @@ function GetToken(User,Pass,type){
                                     <a href="#">
                                         <div class="pro-show-li-box">
                                             <a class="IndexPointHref" href="ProductPageCont.html">
-                                                <div class="pro-show-box-img">
-                                                	<img class="ProPointImg" style="width:100%;height:100%;" src="" />
+                                                <div class="pro-show-box-img" >
+                                                	<img class="ProPointImg" style="width:100%;height:100%;" src="Picture/Background-k.png" />
                                                 </div>
                                             </a>
                                             <span class="pro-show-box-span1">
-                                                <a class="proname">Iphone3S9 plus</a>
+                                                <a class="proname">&nbsp;</a>
                                             </span>
                                             <div class="pro-show-box-span2">
                                                 <div class="pro-show-box-span-line">
                                                     <div class="test"></div>
                                                 </div>
-                                                <span style="font-size:1rem;"><a>300</a><a>/</a><a>500</a></span>
                                             </div>
+                                            <span style=""><a class="IndexJoinNum">1</a><a>/</a><a class="IndexUserNum">999</a></span>
                                          </div>
                                     </a>
                                 </li>
@@ -561,14 +585,14 @@ function GetToken(User,Pass,type){
                     
                         	<a class="IndexHref" href="ProductPageList.html">
                                 <div class="goods-flex-box-img" >
-                                    <img class="ProListImg" style="width:100%;height:100%; src="" />
+                                    <img class="ProListImg" style="width:100%;height:100%;" src="Picture/Background-k.png" />
                                 </div>
                             </a>
                         	<div class="goods-flex-box-img-words">
                             	<dl>
-                                	<dd class="ProListName"><strong>皮卡丘玩偶</strong></dd>
-                                    <dt style="color:#ffb300;"><a class="ProListPrice">1200</a>积分</dt>
-                                    <dt style="color:#999999;font-size:.8rem;">剩余库存：<a class="ProListQuantity">50</a></dt>
+                                	<dd class="ProListName">&nbsp;</dd>
+                                    <dt style="color:#ffb300;">&nbsp;<a class="ProListPrice"></a>积分</dt>
+                                    <dt style="color:#999999;font-size:.8rem;">剩余库存：<a class="ProListQuantity">&nbsp;</a></dt>
                                 </dl>
                             </div>
                         
@@ -577,82 +601,14 @@ function GetToken(User,Pass,type){
                     
                         	<a class="IndexHref" href="ProductPageList.html">
                                 <div class="goods-flex-box-img" >
-                                    <img class="ProListImg" style="width:100%;height:100%; src="" />
+                                    <img class="ProListImg" style="width:100%;height:100%;" src="Picture/Background-k.png" />
                                 </div>
                             </a>
                         	<div class="goods-flex-box-img-words">
                             	<dl>
-                                	<dd class="ProListName"><strong>皮卡丘玩偶</strong></dd>
-                                    <dt style="color:#ffb300;"><a class="ProListPrice">1200</a>积分</dt>
-                                    <dt style="color:#999999;font-size:.8rem;">剩余库存：<a class="ProListQuantity">50</a></dt>
-                                </dl>
-                            </div>
-                        
-                    </div>
-                </div>
-            	<div class="flex goosd-line">
-                	<div class="flex-1 flex-1-lbox">
-                    
-                        	<a class="IndexHref" href="ProductPageList.html">
-                                <div class="goods-flex-box-img" >
-                                    <img class="ProListImg" style="width:100%;height:100%; src="" />
-                                </div>
-                            </a>
-                        	<div class="goods-flex-box-img-words">
-                            	<dl>
-                                	<dd class="ProListName"><strong>皮卡丘玩偶</strong></dd>
-                                    <dt style="color:#ffb300;"><a class="ProListPrice">1200</a>积分</dt>
-                                    <dt style="color:#999999;font-size:.8rem;">剩余库存：<a class="ProListQuantity">50</a></dt>
-                                </dl>
-                            </div>
-                        
-                    </div>
-                	<div class="flex-1 flex-1-lbox">
-                    
-                        	<a class="IndexHref" href="ProductPageList.html">
-                                <div class="goods-flex-box-img" >
-                                    <img class="ProListImg" style="width:100%;height:100%; src="" />
-                                </div>
-                            </a>
-                        	<div class="goods-flex-box-img-words">
-                            	<dl>
-                                	<dd class="ProListName"><strong>皮卡丘玩偶</strong></dd>
-                                    <dt style="color:#ffb300;"><a class="ProListPrice">1200</a>积分</dt>
-                                    <dt style="color:#999999;font-size:.8rem;">剩余库存：<a class="ProListQuantity">50</a></dt>
-                                </dl>
-                            </div>
-                        
-                    </div>
-                </div>
-            	<div class="flex goosd-line">
-                	<div class="flex-1 flex-1-lbox">
-                    
-                        	<a class="IndexHref" href="ProductPageList.html">
-                                <div class="goods-flex-box-img" >
-                                    <img class="ProListImg" style="width:100%;height:100%; src="" />
-                                </div>
-                            </a>
-                        	<div class="goods-flex-box-img-words">
-                            	<dl>
-                                	<dd class="ProListName"><strong>皮卡丘玩偶</strong></dd>
-                                    <dt style="color:#ffb300;"><a class="ProListPrice">1200</a>积分</dt>
-                                    <dt style="color:#999999;font-size:.8rem;">剩余库存：<a class="ProListQuantity">50</a></dt>
-                                </dl>
-                            </div>
-                        
-                    </div>
-                	<div class="flex-1 flex-1-lbox">
-                    
-                        	<a class="IndexHref" href="ProductPageList.html">
-                                <div class="goods-flex-box-img" >
-                                    <img class="ProListImg" style="width:100%;height:100%; src="" />
-                                </div>
-                            </a>
-                        	<div class="goods-flex-box-img-words">
-                            	<dl>
-                                	<dd class="ProListName"><strong>皮卡丘玩偶</strong></dd>
-                                    <dt style="color:#ffb300;"><a class="ProListPrice">1200</a>积分</dt>
-                                    <dt style="color:#999999;font-size:.8rem;">剩余库存：<a class="ProListQuantity">50</a></dt>
+                                	<dd class="ProListName">&nbsp;</dd>
+                                    <dt style="color:#ffb300;">&nbsp;<a class="ProListPrice"></a>积分</dt>
+                                    <dt style="color:#999999;font-size:.8rem;">剩余库存：<a class="ProListQuantity">&nbsp;</a></dt>
                                 </dl>
                             </div>
                         
@@ -660,9 +616,8 @@ function GetToken(User,Pass,type){
                 </div>
             
             
-            </div>
             
-            
+            </div><!-----总商品列表--->
             <!----------------------------------------------------------------------------------------------->
         </div>
         
@@ -681,7 +636,7 @@ function GetToken(User,Pass,type){
 		effect:"left",
 		delayTime:200,
 		interTime:116000,
-		autoPlay:true
+		autoPlay:false
 		});
 
 </script>
